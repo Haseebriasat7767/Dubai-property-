@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" role="img" aria-label="VÉLORA DUBAI — champagne on transparent">
+  <g fill="none" stroke="#C6A15B" stroke-width="9" stroke-linecap="square" stroke-linejoin="miter">
+    <path transform="translate(203,140)" d="M0 0 L50 160 L100 0"/>
+    <g transform="translate(347,140)"><path d="M0 0 V160 M0 0 H78 M0 80 H66 M0 160 H78"/><path d="M58 -44 L96 -84"/></g>
+    <path transform="translate(491,140)" d="M0 0 V160 H70"/>
+    <path transform="translate(605,140)" d="M55 0 A52 80 0 1 1 55 160 A52 80 0 1 1 55 0"/>
+    <g transform="translate(759,140)"><path d="M0 0 V160 M0 0 H46 A38 40 0 0 1 46 80 H0"/><path d="M30 80 L78 160"/></g>
+    <g transform="translate(898,140)"><path d="M0 160 L50 0 L100 160"/><path d="M17 100 H83"/></g>
+  </g>
+  <path d="M480 333 H720" stroke="#C6A15B" stroke-width="2" fill="none"/>
+  <g fill="none" stroke="#C6A15B" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter">
+    <path transform="translate(390,366)" d="M0 0 V64 M0 0 H16 A30 32 0 0 1 16 64 H0"/>
+    <path transform="translate(494,366)" d="M0 0 V38 A22 26 0 0 0 44 38 V0"/>
+    <path transform="translate(596,366)" d="M0 0 V64 M0 0 H20 A24 16 0 0 1 20 32 A24 16 0 0 1 20 64 H0"/>
+    <g transform="translate(698,366)"><path d="M0 64 L22 0 L44 64"/><path d="M8 40 H36"/></g>
+    <path transform="translate(800,366)" d="M0 0 V64"/>
+  </g>
+</svg>

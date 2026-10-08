@@ -1,0 +1,58 @@
+{
+  "property": "VÉLORA SKY PALACE",
+  "model": "velora-sky-palace-webgl.glb",
+  "units": "meters",
+  "up": "Y",
+  "note": "Concept hotspots for 'HOVER TO EXPLORE' interactions. position = marker anchor in model space; camera = suggested view. Wire via THREE.Raycaster over the sprites, or match the named meshes in the GLB (Entrance-*, Pool, Rooftop-*, Terrace-01, Garage, Volume-02).",
+  "hotspots": [
+    {
+      "id": "entrance",
+      "label": "Main Entrance",
+      "cta": "VIEW RESIDENCE",
+      "position": [-8, 4.8, 10.5],
+      "camera": { "position": [-16, 5.5, 26], "target": [-8, 3.5, 7] }
+    },
+    {
+      "id": "living-room",
+      "label": "Living Room",
+      "cta": "DISCOVER THE INTERIOR",
+      "position": [5, 3.4, 3.5],
+      "camera": { "position": [5, 3.6, 16], "target": [5, 3.2, -2] }
+    },
+    {
+      "id": "master-suite",
+      "label": "Master Suite",
+      "cta": "EXPLORE FLOOR",
+      "position": [-4, 10.6, 1.8],
+      "camera": { "position": [-4, 11.2, 15], "target": [-4, 10, -2] }
+    },
+    {
+      "id": "pool",
+      "label": "Infinity Pool",
+      "cta": "EXPLORE",
+      "position": [6, 1.7, 16],
+      "camera": { "position": [12, 4.5, 28], "target": [0, 1, 16] }
+    },
+    {
+      "id": "terrace",
+      "label": "Cantilevered Terrace",
+      "cta": "EXPLORE",
+      "position": [6, 7.6, 6],
+      "camera": { "position": [15, 10.5, 17], "target": [0, 7.3, 4] }
+    },
+    {
+      "id": "rooftop",
+      "label": "Rooftop",
+      "cta": "EXPLORE FLOOR",
+      "position": [3, 20, -2],
+      "camera": { "position": [15, 26, 13], "target": [3, 19, -5] }
+    },
+    {
+      "id": "garage",
+      "label": "Private Garage",
+      "cta": "VIEW RESIDENCE",
+      "position": [-18.5, 4.8, -2.5],
+      "camera": { "position": [-29, 7.5, 11], "target": [-18.5, 3, -5] }
+    }
+  ]
+}
