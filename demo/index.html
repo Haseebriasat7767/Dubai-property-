@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>VÉLORA SKY PALACE — Interactive Model</title>
+<style>
+  :root { --noir:#0b0b0c; --ivory:#f4efe6; --champagne:#c6a15b; --gray:#8a8f98; }
+  * { margin:0; box-sizing:border-box; }
+  html,body { height:100%; overflow:hidden; background:var(--noir); }
+  canvas { display:block; }
+  #c { position:fixed; inset:0; }
+  .serif { font-family:"Cormorant Garamond", Didot, "Bodoni MT", "Times New Roman", serif; }
+  .sans { font-family:"Inter", "Helvetica Neue", Arial, sans-serif; }
+  #brand { position:fixed; top:34px; left:40px; color:var(--ivory); z-index:10; }
+  #brand .word { font-size:26px; letter-spacing:.42em; font-weight:400; }
+  #brand .line { width:120px; height:1px; background:var(--champagne); margin:10px 0 8px; opacity:.8; }
+  #brand .sub { font-size:10px; letter-spacing:.42em; color:var(--gray); }
+  #hint { position:fixed; bottom:26px; left:40px; font-size:10px; letter-spacing:.34em; color:var(--gray); z-index:10; }
+  #hint b { color:var(--champagne); font-weight:500; }
+  #card { position:fixed; right:40px; bottom:40px; min-width:240px; padding:22px 26px; z-index:10;
+          background:rgba(11,11,12,.82); backdrop-filter:blur(10px); border:1px solid rgba(198,161,91,.35); }
+  #card .label { font-size:19px; color:var(--ivory); letter-spacing:.06em; }
+  #card .cta { margin-top:10px; font-size:10px; letter-spacing:.4em; color:var(--champagne); }
+  #loading { position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+             color:var(--gray); font-size:10px; letter-spacing:.4em; z-index:9; }
+  @media (max-width:640px){ #brand{top:22px;left:22px} #hint{left:22px;bottom:18px} #card{right:22px;bottom:22px} }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="brand">
+  <div class="word sans">VÉLORA</div>
+  <div class="line"></div>
+  <div class="sub sans">SKY PALACE · INTERACTIVE PREVIEW</div>
+</div>
+<div id="hint" class="sans"><b>DRAG</b> TO ORBIT &nbsp;·&nbsp; <b>SCROLL</b> TO ZOOM &nbsp;·&nbsp; <b>HOVER</b> A MARKER</div>
+<div id="card" hidden>
+  <div class="label serif" id="card-label"></div>
+  <div class="cta sans" id="card-cta"></div>
+</div>
+<div id="loading" class="sans">LOADING MODEL</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "./vendor/three.module.js",
+  "three/addons/": "./vendor/addons/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0b0b0c);
+scene.fog = new THREE.Fog(0x0b0b0c, 90, 220);
+
+const camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.1, 500);
+camera.position.set(34, 16, 46);
+
+const controls = new OrbitControls(camera, canvas);
+controls.target.set(0, 8, 0);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.5;
+controls.maxPolarAngle = Math.PI * 0.495;
+controls.minDistance = 12;
+controls.maxDistance = 120;
+
+// Lighting — warm architectural
+scene.add(new THREE.HemisphereLight(0x35404d, 0x0b0b0c, 0.9));
+const sun = new THREE.DirectionalLight(0xffe2b8, 2.2);
+sun.position.set(-40, 55, 35);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.left = -60; sun.shadow.camera.right = 60;
+sun.shadow.camera.top = 60; sun.shadow.camera.bottom = -60;
+scene.add(sun);
+const poolGlow = new THREE.PointLight(0x2e6a7a, 1.6, 40);
+poolGlow.position.set(0, 2.5, 16);
+scene.add(poolGlow);
+
+// Model
+const loader = new GLTFLoader();
+let model = null;
+loader.load('../3d-models/velora-sky-palace-webgl.glb', (gltf) => {
+  model = gltf.scene;
+  model.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+  scene.add(model);
+  document.getElementById('loading').remove();
+});
+
+// Hotspots
+const card = document.getElementById('card');
+const cardLabel = document.getElementById('card-label');
+const cardCta = document.getElementById('card-cta');
+const sprites = [];
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+let hovered = null;
+
+function markerTexture() {
+  const c = document.createElement('canvas'); c.width = c.height = 128;
+  const x = c.getContext('2d');
+  x.strokeStyle = 'rgba(198,161,91,.95)'; x.lineWidth = 4;
+  x.beginPath(); x.arc(64, 64, 40, 0, Math.PI * 2); x.stroke();
+  x.fillStyle = '#c6a15b';
+  x.beginPath(); x.arc(64, 64, 14, 0, Math.PI * 2); x.fill();
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
+fetch('../3d-models/hotspots.json').then(r => r.json()).then((data) => {
+  const tex = markerTexture();
+  for (const h of data.hotspots) {
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false }));
+    s.position.set(...h.position);
+    s.scale.setScalar(1.6);
+    s.userData = h;
+    s.renderOrder = 10;
+    scene.add(s);
+    sprites.push(s);
+  }
+});
+
+addEventListener('pointermove', (e) => {
+  pointer.x = (e.clientX / innerWidth) * 2 - 1;
+  pointer.y = -(e.clientY / innerHeight) * 2 + 1;
+});
+
+let fly = null;
+addEventListener('click', () => {
+  if (!hovered) return;
+  const h = hovered.userData;
+  fly = {
+    fromP: camera.position.clone(), toP: new THREE.Vector3(...h.camera.position),
+    fromT: controls.target.clone(), toT: new THREE.Vector3(...h.camera.target),
+    t: 0
+  };
+  controls.autoRotate = false;
+});
+
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = clock.getDelta();
+
+  raycaster.setFromCamera(pointer, camera);
+  const hit = raycaster.intersectObjects(sprites, false)[0];
+  const obj = hit ? hit.object : null;
+  if (obj !== hovered) {
+    hovered = obj;
+    if (hovered) {
+      cardLabel.textContent = hovered.userData.label;
+      cardCta.textContent = hovered.userData.cta;
+      card.hidden = false;
+      canvas.style.cursor = 'pointer';
+    } else {
+      card.hidden = true;
+      canvas.style.cursor = '';
+    }
+  }
+  for (const s of sprites) {
+    const target = (s === hovered) ? 2.3 : 1.6;
+    s.scale.setScalar(THREE.MathUtils.lerp(s.scale.x, target, 0.18));
+  }
+
+  if (fly) {
+    fly.t = Math.min(1, fly.t + dt / 1.4);
+    const k = fly.t * fly.t * (3 - 2 * fly.t);
+    camera.position.lerpVectors(fly.fromP, fly.toP, k);
+    controls.target.lerpVectors(fly.fromT, fly.toT, k);
+    if (fly.t >= 1) fly = null;
+  }
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+</script>
+</body>
+</html>

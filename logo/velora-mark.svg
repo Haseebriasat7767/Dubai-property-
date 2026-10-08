@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="VÉLORA mark">
+  <!-- Minimal architectural V mark: the V of VÉLORA over a horizon hairline. -->
+  <path d="M48 44 L120 196 L192 44" fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M48 214 H192" fill="none" stroke="currentColor" stroke-width="3"/>
+</svg>

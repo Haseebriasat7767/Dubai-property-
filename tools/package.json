@@ -1,0 +1,10 @@
+{
+  "name": "velora-tools",
+  "private": true,
+  "type": "module",
+  "description": "Build tooling for the VÉLORA asset package (GLB generation, logo PNG rendering)",
+  "dependencies": {
+    "sharp": "^0.35.5",
+    "three": "^0.160.1"
+  }
+}
